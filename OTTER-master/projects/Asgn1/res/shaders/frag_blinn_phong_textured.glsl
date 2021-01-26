@@ -27,6 +27,8 @@ uniform float u_TextureMix;
 
 uniform vec3  u_CamPos;
 
+uniform bool u_LightHere;
+
 out vec4 frag_color;
 
 // https://learnopengl.com/Advanced-Lighting/Advanced-Lighting
@@ -53,7 +55,7 @@ void main() {
 	vec3 h        = normalize(lightDir + viewDir);
 
 	// Get the specular power from the specular map
-	float texSpec = texture(s_Specular, inUV).x;
+	float texSpec = 1.0f;//texture(s_Specular, inUV).x;
 	float spec = pow(max(dot(N, h), 0.0), u_Shininess); // Shininess coefficient (can be a uniform)
 	vec3 specular = u_SpecularLightStrength * texSpec * spec * u_LightCol; // Can also use a specular color
 
@@ -61,11 +63,13 @@ void main() {
 	vec4 textureColor1 = texture(s_Diffuse, inUV);
 	vec4 textureColor2 = texture(s_Diffuse2, inUV);
 	vec4 textureColor = mix(textureColor1, textureColor2, u_TextureMix);
-
+	
+	
 	vec3 result = (
 		(u_AmbientCol * u_AmbientStrength) + // global ambient light
 		(ambient + diffuse + specular) * attenuation // light factors from our single light
 		) * inColor * textureColor.rgb; // Object color
+	
 
 	frag_color = vec4(result, textureColor.a);
 }
