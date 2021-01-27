@@ -27,7 +27,12 @@ uniform float u_TextureMix;
 
 uniform vec3  u_CamPos;
 
-uniform bool u_LightHere;
+uniform bool u_Cel;
+
+//cel shading
+uniform float lightIntensity = 10.0;
+const int bands=5;
+const float scaleFactor=1.0/bands;
 
 out vec4 frag_color;
 
@@ -36,13 +41,6 @@ void main() {
 	// Lecture 5
 	vec3 ambient = u_AmbientLightStrength * u_LightCol;
 
-	// Diffuse
-	vec3 N = normalize(inNormal);
-	vec3 lightDir = normalize(u_LightPos - inPos);
-
-	float dif = max(dot(N, lightDir), 0.0);
-	vec3 diffuse = dif * u_LightCol;// add diffuse intensity
-
 	//Attenuation
 	float dist = length(u_LightPos - inPos);
 	float attenuation = 1.0f / (
@@ -50,8 +48,15 @@ void main() {
 		u_LightAttenuationLinear * dist +
 		u_LightAttenuationQuadratic * dist * dist);
 
+	// Diffuse
+	vec3 N = normalize(inNormal);//world normal
+	vec3 lightDir = normalize(u_LightPos - inPos);//L
+
+	float dif = max(dot(N, lightDir), 0.0);
+	vec3 diffuse = (dif * u_LightCol);// add diffuse intensity
+
 	// Specular
-	vec3 viewDir  = normalize(u_CamPos - inPos);
+	vec3 viewDir  = normalize(u_CamPos - inPos);//V
 	vec3 h        = normalize(lightDir + viewDir);
 
 	// Get the specular power from the specular map
@@ -70,6 +75,21 @@ void main() {
 		(ambient + diffuse + specular) * attenuation // light factors from our single light
 		) * inColor * textureColor.rgb; // Object color
 	
+
+	//cel shading
+	vec3 diffuseOut = (dif * u_LightCol) / (dist*dist);
+	diffuseOut = diffuseOut*lightIntensity;
+	diffuseOut=floor(diffuseOut*bands)*scaleFactor;
+
+	//outline effect
+	float edge=(dot(viewDir,N) <0.2)? 0.0 : 1.0;
+
+	if(u_Cel){
+	 result = (
+		(u_AmbientCol * u_AmbientStrength) + // global ambient light
+		(ambient + (diffuseOut*edge) + specular) * attenuation // light factors from our single light
+		) * inColor * textureColor.rgb; // Object color
+	}
 
 	frag_color = vec4(result, textureColor.a);
 }

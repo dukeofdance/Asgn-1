@@ -248,7 +248,7 @@ int main() {
 		shader->LoadShaderPartFromFile("shaders/frag_blinn_phong_textured.glsl", GL_FRAGMENT_SHADER);
 		shader->Link();
 		
-		glm::vec3 lightPos = glm::vec3(0.0f, 0.0f, 0.0f);//glm::vec3(0.0f, 0.0f, 2.0f)
+		glm::vec3 lightPos = glm::vec3(0.0f, 0.0f, 0.0f);//glm::vec3(0.0f, 0.0f, 2.0f)/
 		glm::vec3 lightCol = glm::vec3(1.0f, 1.0f, 1.0f); //glm::vec3(0.9f, 0.85f, 0.5f)
 		float     lightAmbientPow = 1.0f;//0.5
 		float     lightSpecularPow = 0.0f;//1.0
@@ -269,7 +269,7 @@ int main() {
 		shader->SetUniform("u_LightAttenuationLinear", lightLinearFalloff);
 		shader->SetUniform("u_LightAttenuationQuadratic", lightQuadraticFalloff);
 		
-		//shader->SetUniform("u_LightHere", false);
+		shader->SetUniform("u_Cel", (int)false);
 		
 		// We'll add some ImGui controls to control our shader
 		imGuiCallbacks.push_back([&]() {
@@ -282,16 +282,20 @@ int main() {
 				shader->SetUniform("u_LightPos", glm::vec3(0.0f, 0.0f, 0.0f));
 
 				shader->SetUniform("u_SpecularLightStrength", 0.0f);
+
+				shader->SetUniform("u_Cel", (int)false);
+
 			}
 			if (ImGui::Button("Ambient")) {
 				shader->SetUniform("u_AmbientCol", glm::vec3(1.0f));
-				shader->SetUniform("u_AmbientStrength", 0.1f);
+				shader->SetUniform("u_AmbientStrength", 0.3f);
 				shader->SetUniform("u_AmbientLightStrength", 0.5f);
 
 				shader->SetUniform("u_LightPos", glm::vec3(0.0f, 0.0f, 0.0f));
 
 				shader->SetUniform("u_SpecularLightStrength", 0.0f);
 
+				shader->SetUniform("u_Cel", (int)false);
 
 			}
 			if (ImGui::Button("Specular")) {
@@ -302,6 +306,7 @@ int main() {
 				shader->SetUniform("u_AmbientStrength", 0.0f);
 				shader->SetUniform("u_AmbientLightStrength", 0.0f);
 
+				shader->SetUniform("u_Cel", (int)false);
 
 			}
 			if (ImGui::Button("Diffuse")) {
@@ -314,6 +319,7 @@ int main() {
 
 				shader->SetUniform("u_SpecularLightStrength", 0.0f);
 
+				shader->SetUniform("u_Cel", (int)false);
 
 			}
 
@@ -321,26 +327,26 @@ int main() {
 				shader->SetUniform("u_LightPos", glm::vec3(0.0f, 0.0f, 0.0f));
 
 				shader->SetUniform("u_AmbientCol", glm::vec3(1.0f));
-				shader->SetUniform("u_AmbientStrength", 0.1f);
+				shader->SetUniform("u_AmbientStrength", 0.3f);
 				shader->SetUniform("u_AmbientLightStrength", 0.5f);
 
 				shader->SetUniform("u_SpecularLightStrength", 1.0f);
 
-
+				shader->SetUniform("u_Cel", (int)false);
 
 			}
-
+			
 			if (ImGui::Button("Special")) {
 				shader->SetUniform("u_LightPos", glm::vec3(0.0f, 0.0f, 0.0f));
 
 				shader->SetUniform("u_AmbientCol", glm::vec3(1.0f));
-				shader->SetUniform("u_AmbientStrength", 0.1f);
+				shader->SetUniform("u_AmbientStrength", 0.3f);
 				shader->SetUniform("u_AmbientLightStrength", 0.5f);
 
 				shader->SetUniform("u_SpecularLightStrength", 1.0f);
 
+				shader->SetUniform("u_Cel", (int)true);
 			}
-
 
 			/*
 			if (ImGui::CollapsingHeader("Scene Level Lighting Settings"))
@@ -457,7 +463,7 @@ int main() {
 		reflective->LoadShaderPartFromFile("shaders/frag_blinn_phong_reflection.glsl", GL_FRAGMENT_SHADER);
 		reflective->Link();
 		
-		// 
+		
 		ShaderMaterial::sptr material1 = ShaderMaterial::Create(); 
 		material1->Shader = reflective;
 		material1->Set("s_Diffuse", diffuse);
@@ -500,7 +506,7 @@ int main() {
 			VertexArrayObject::sptr vao = ObjLoader::LoadFromFile("models/plane.obj");
 			sceneObj.emplace<RendererComponent>().SetMesh(vao).SetMaterial(material0);
 			sceneObj.get<Transform>().SetLocalPosition(0.0f, 0.0f, 0.25f);
-			sceneObj.get<Transform>().SetLocalScale(8.0f, 8.0f, 1.0f);
+			sceneObj.get<Transform>().SetLocalScale(4.0f, 4.0f, 1.0f);
 
 		}
 
@@ -508,9 +514,9 @@ int main() {
 		{
 			VertexArrayObject::sptr vao = ObjLoader::LoadFromFile("models/edge.obj");
 			obj2.emplace<RendererComponent>().SetMesh(vao).SetMaterial(material3);
-			obj2.get<Transform>().SetLocalPosition(0.0f, 0.0f, 0.8f);
+			obj2.get<Transform>().SetLocalPosition(0.0f, 0.0f, 0.4f);
 			obj2.get<Transform>().SetLocalRotation(90.0f, 0.0f, 0.0f);
-			obj2.get<Transform>().SetLocalScale(0.33f, 0.5f, 0.8f);
+			obj2.get<Transform>().SetLocalScale(0.18f, 0.05f, 0.4f);
 			
 		}
 		
@@ -518,9 +524,9 @@ int main() {
 		{
 			VertexArrayObject::sptr vao = ObjLoader::LoadFromFile("models/clown.obj");
 			obj3.emplace<RendererComponent>().SetMesh(vao).SetMaterial(material3);//reflectiveMat
-			obj3.get<Transform>().SetLocalPosition(0.0f, 0.0f, 5.5f);
+			obj3.get<Transform>().SetLocalPosition(0.0f, 0.0f, 2.5f);
 			obj3.get<Transform>().SetLocalRotation(90.0f, 0.0f, 0.0f);
-			obj3.get<Transform>().SetLocalScale(0.25f, 0.25f, 0.25f);
+			obj3.get<Transform>().SetLocalScale(0.1f, 0.1f, 0.1f);
 
 		}
 
@@ -535,8 +541,10 @@ int main() {
 
 			// Bind returns a smart pointer to the behaviour that was added
 			auto pathing = BehaviourBinding::Bind<FollowPathBehaviour>(obj4);
-			pathing->Points.push_back({ -7.0f, -6.0f, 0.0f });
-			pathing->Points.push_back({ -7.0f, 7.0f, 0.0f });
+			pathing->Points.push_back({ -3.0f, -4.0f, 0.0f });
+			pathing->Points.push_back({ -3.0f, 3.0f, 0.0f });
+
+
 			pathing->Speed = 2.0f;
 		}
 		
@@ -549,8 +557,8 @@ int main() {
 
 			auto pathing = BehaviourBinding::Bind<FollowPathBehaviour>(obj5);
 			// Set up a path for the object to follow
-			pathing->Points.push_back({ 8.0f, -6.0f, 0.0f });
-			pathing->Points.push_back({ -6.0f, -6.0f, 0.0f });
+			pathing->Points.push_back({ 4.0f, -3.0f, 0.0f });
+			pathing->Points.push_back({ -2.0f, -3.0f, 0.0f });
 			pathing->Speed = 2.0f;
 		}
 		
@@ -563,8 +571,9 @@ int main() {
 
 			auto pathing = BehaviourBinding::Bind<FollowPathBehaviour>(obj6);
 			// Set up a path for the object to follow
-			pathing->Points.push_back({ 7.0f, 8.0f, 0.0f });
-			pathing->Points.push_back({ 7.0f, -6.0f, 0.0f });
+			pathing->Points.push_back({ 3.0f, 4.0f, 0.0f });
+			pathing->Points.push_back({ 3.0f, -3.0f, 0.0f });
+
 			pathing->Speed = 2.0f;
 		}
 		GameObject obj7 = scene->CreateEntity("tankDown");
@@ -576,8 +585,10 @@ int main() {
 
 			auto pathing = BehaviourBinding::Bind<FollowPathBehaviour>(obj7);
 			// Set up a path for the object to follow
-			pathing->Points.push_back({ -8.0f, 8.0f, 0.0f });
-			pathing->Points.push_back({ 6.0f, 8.0f, 0.0f });
+			pathing->Points.push_back({ -4.0f, 3.0f, 0.0f });
+			pathing->Points.push_back({ 3.0f, 3.0f, 0.0f });
+
+
 			pathing->Speed = 2.0f;
 		}
 
