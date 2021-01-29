@@ -273,7 +273,7 @@ int main() {
 		
 		// We'll add some ImGui controls to control our shader
 		imGuiCallbacks.push_back([&]() {
-			if (ImGui::Button("None")) {
+			if (ImGui::Button("Base Lighting")) {
 				
 				shader->SetUniform("u_AmbientCol", glm::vec3(0.0f));
 				shader->SetUniform("u_AmbientStrength", 0.0f);
@@ -310,21 +310,19 @@ int main() {
 
 			}
 			if (ImGui::Button("Diffuse")) {
-				shader->SetUniform("u_SpecularLightStrength", 0.0f);
-
 				shader->SetUniform("u_LightPos", glm::vec3(0.0f, 0.0f, 2.0f));
+				
+				shader->SetUniform("u_SpecularLightStrength", 0.0f);
 				shader->SetUniform("u_AmbientCol", glm::vec3(0.0f));
 				shader->SetUniform("u_AmbientStrength", 0.0f);
 				shader->SetUniform("u_AmbientLightStrength", 0.0f);
-
-				shader->SetUniform("u_SpecularLightStrength", 0.0f);
 
 				shader->SetUniform("u_Cel", (int)false);
 
 			}
 
 			if (ImGui::Button("Ambient+Specular+Diffuse")) {
-				shader->SetUniform("u_LightPos", glm::vec3(0.0f, 0.0f, 0.0f));
+				shader->SetUniform("u_LightPos", glm::vec3(0.0f, 0.0f, 2.0f));
 
 				shader->SetUniform("u_AmbientCol", glm::vec3(1.0f));
 				shader->SetUniform("u_AmbientStrength", 0.3f);
@@ -337,7 +335,7 @@ int main() {
 			}
 			
 			if (ImGui::Button("Special")) {
-				shader->SetUniform("u_LightPos", glm::vec3(0.0f, 0.0f, 0.0f));
+				shader->SetUniform("u_LightPos", glm::vec3(0.0f, 0.0f, 2.0f));
 
 				shader->SetUniform("u_AmbientCol", glm::vec3(1.0f));
 				shader->SetUniform("u_AmbientStrength", 0.3f);

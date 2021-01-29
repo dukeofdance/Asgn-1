@@ -38,7 +38,7 @@ out vec4 frag_color;
 
 // https://learnopengl.com/Advanced-Lighting/Advanced-Lighting
 void main() {
-	// Lecture 5
+	// Ambient
 	vec3 ambient = u_AmbientLightStrength * u_LightCol;
 
 	//Attenuation
